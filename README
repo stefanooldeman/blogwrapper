@@ -1,0 +1,15 @@
+Ketchup!
+
+please note: This app is in very early development.
+
+important. to get everything up and running!
+for now ive chosen to put the usage of very large libraries not under version control
+to get the latest zend framewort. do the following:
+
+$ cd lib 
+$ git svn clone http://framework.zend.com/svn/framework/standard/trunk/library/Zend
+"note: you might see the following message:"
+Initialized empty Git repository in /Users/stefanooldeman/Sites/ketchup/lib/Zend/.git/
+W: Ignoring error from SVN, path probably does not exist: (160013): Filesystem has no item: '/svn/framework/!svn/bc/100/standard/trunk/library/Zend' path not found
+W: Do not be alarmed at the above message git-svn is just searching aggressively for old history.
+This may take a while on large repositories

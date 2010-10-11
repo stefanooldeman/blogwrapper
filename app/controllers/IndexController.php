@@ -2,7 +2,11 @@
 class IndexController extends Zend_Controller_Action {
 
 	public function indexAction() {
-		$this->view->var = 'hello';
+		$l_oPostReader = new App_Post_Reader();
+		$l_aPosts = $l_oPostReader->fetchOverview();
+		krsort($l_aPosts);
+
+		$this->view->posts = $l_aPosts;
 	}
 }
 
