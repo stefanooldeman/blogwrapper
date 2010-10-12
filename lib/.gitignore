@@ -1,5 +1,9 @@
 # Dwoo template library
-#./Dwoo/*
+./Dwoo/*
+./plugins
 
 # Zend Framework (trunk version)
-#./Zend/*
+./Zend/*
+
+# individual files in this curr directory
+*.php

@@ -1,4 +1,6 @@
 <?php
+putenv('APPLICATION_ENV=local');
+
 // Define path to application directory
 defined('APPLICATION_PATH')
     || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../app'));
@@ -10,13 +12,13 @@ defined('APPLICATION_ENV') || define('APPLICATION_ENV', (getenv('APPLICATION_ENV
 define('DEBUG', true);
 
 // Ensure library is on include_path
-set_include_path(
-	realpath(APPLICATION_PATH . '/../lib')
-	. PATH_SEPARATOR . get_include_path()
-);
+set_include_path(implode(PATH_SEPARATOR, array(
+    realpath(APPLICATION_PATH . '/../lib'),
+    get_include_path(),
+)));
 
 /* Dwoo Templating solution */
-require_once('Dwoo/dwooAutoload.php');
+require_once('dwooAutoload.php');
 
 /** Zend_Application */
 require_once 'Zend/Application.php';

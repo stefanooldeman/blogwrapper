@@ -89,7 +89,7 @@ class ErrorController extends Zend_Controller_Action {
 		}
 		
 		$l_sExceptionLogFile = Zend_Registry::get('config')->log->dir . 'Exceptions.log';
-		$stream = fopen($l_sExceptionLogFile, 'a', false);
+		$stream = @fopen($l_sExceptionLogFile, 'a', false);
 
 		if ($stream == false) {
 			throw new ErrorException('Failed to open stream');
