@@ -3,13 +3,13 @@
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
 	private $config;
-	
+
 	public function _initAutoload()
 	{
 		$l_oAutoloader = new Zend_Application_Module_Autoloader(array(
-			'namespace' => '',
+			'namespace' => 'App_',
 			'basePath' => APPLICATION_PATH));
-		
+
 		return $l_oAutoloader;
 	}
 
@@ -21,7 +21,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		foreach($this->config->phpSettings->toArray() as $key => $value) {
 			ini_set($key, $value);
 		}
-		var_dump(ini_get('html_errors'));
+//		dumpAndDie('html_errors', ini_get('html_errors'));
 	}
 
 	public function _initViewRender() {
@@ -34,10 +34,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			)
 		));
 		$l_oViewRenderer = new Zend_Controller_Action_Helper_ViewRenderer($l_oViewInterface);
-		
+
 		Zend_Controller_Action_HelperBroker::addHelper($l_oViewRenderer);
 	}
-	
+
 	/**
      * _initLayout sets the doctype, headMeta and headTitle
      */
@@ -58,24 +58,24 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     }
 
 	public function _initRoutes() {
-		
+
 		$this->bootstrap('frontController');
 		$l_oRouter = $this->getResource('frontController')->getRouter();
 
 		$l_oRouter->addRoute('addAccount', new Zend_Controller_Router_Route('/account/add/:service',
 			array('controller' => 'account', 'action' => 'add',)));
-		
+
 	}*/
 }
 
 // dirty function to dump a var and die
 function dumpAndDie() {
-	if(extension_loaded('xdebug') == true) {
-		header('content-type: html/plain');
-	} else {
+
+	if(extension_loaded('xdebug') == true)
+		header('content-type: text/html');
+	else
 		header('content-type: text/plain');
-	}
-	
+
 	$l_aArgs = func_get_args();
 	foreach($l_aArgs as $l_mArg) var_dump($l_mArg);
 	die;
