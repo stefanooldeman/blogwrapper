@@ -1,11 +1,9 @@
 <?php
 
-class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
-{
+class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {	
 	private $config;
 
-	public function _initAutoload()
-	{
+	public function _initAutoload() {
 		$l_oAutoloader = new Zend_Application_Module_Autoloader(array(
 			'namespace' => 'App_',
 			'basePath' => APPLICATION_PATH));
@@ -14,14 +12,22 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	}
 
 	public function _initConfig() {
-		Zend_Registry::set('config',
-			new Zend_Config_Ini(APPLICATION_PATH . '/config.ini', APPLICATION_ENV));
-			$this->config = Zend_Registry::get('config');
+		if(DEBUG) {
+			//due the use of public a repository I like to ignore this config file
+			$pathToFile = APPLICATION_PATH . '/config.mirror.ini';
+		} else {
+			$pathToFile = APPLICATION_PATH . '/config.ini';
+		}
+
+		$this->config = new Zend_Config_Ini($pathToFile, APPLICATION_ENV);
+		//this almost looks like a DependencyInjection Tool.. but its not
+		//use the registry as kinda replacement of using singleton.
+		Zend_Registry::set('config', $this->config);
 
 		foreach($this->config->phpSettings->toArray() as $key => $value) {
 			ini_set($key, $value);
 		}
-//		dumpAndDie('html_errors', ini_get('html_errors'));
+
 	}
 
 	public function _initViewRender() {
@@ -42,8 +48,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      * _initLayout sets the doctype, headMeta and headTitle
      */
 	/*
-    public function _initViewHelper()
-    {
+    public function _initViewHelper() {
         $this->bootstrap('Layout');
         $layout = $this->getResource('layout');
         $view = $layout->getView();
