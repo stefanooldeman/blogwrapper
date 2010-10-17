@@ -9,12 +9,19 @@ class App_Post_Reader {
 
 	private $m_oAdapter;
 
+	private $m_sOutputType;
+
+	const OUTPUT_MARKDOWN	= 'markdown';
+	const OUTPUT_TEXTILE	= 'textile';
+
 	public function __construct() {
-		$this->setAdapter(); //hard coded so far.
+		//@todo move these 2 choises to the config
+		$this->setOutputType(self::OUTPUT_MARKDOWN);
+		$this->setAdapter(new App_Service_PosterousClient());
 	}
 
 	public function fetchPost($id) {
-		
+		throw new ErrorException('method not implemented yet. on call to App_Post_Reader::fetchPost($id)..');
 	}
 
 	public function fetchOverview() {
@@ -37,6 +44,19 @@ class App_Post_Reader {
 				$l_sBody
 			);
 
+			//we decode htmldecode for the markup parsers.. don't trust api results
+			$l_sBody = htmlspecialchars_decode(strip_tags($l_sBody));
+
+			switch($this->getOutputType()) {
+				case self::OUTPUT_MARKDOWN:
+					$l_sBody = Markdown($l_sBody);
+					break;
+
+				case self::OUTPUT_TEXTILE:
+					throw new ErrorException('This type of output markup is not implemented yet', self::OUTPUT_MARKDOWN);
+					break;
+
+			}
 			$l_oPost->setBody($l_sBody);
 
 			$l_aCollection[] = $l_oPost->toArray();
@@ -44,12 +64,21 @@ class App_Post_Reader {
 		return $l_aCollection;
 	}
 
-	public function setAdapter() {
-		$this->m_oAdapter = new App_Service_PosterousClient();
+	public function setAdapter($p_oService) {
+		$this->m_oAdapter = $p_oService;
 	}
 
 	public function getAdapter() {
 		return $this->m_oAdapter;
 	}
+
+	public function setOutputType($p_sFlag) {
+		$this->m_sOutputType = $p_sFlag;
+	}
+	public function getOutputType() {
+		return $this->m_sOutputType;
+	}
+
+
 
 }
