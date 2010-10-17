@@ -23,6 +23,7 @@ class ErrorController extends Zend_Controller_Action {
 				$this->logException(self::LOG_VERBOSE, $l_oException);
 			}
 		}
+
 		if($this->getRequest()->isXmlHttpRequest()) {
 			$l_oAjax = new App_Controller_Ajax();
 			$l_oAjax->setError(App_Controller_Ajax::ERROR);
@@ -30,17 +31,10 @@ class ErrorController extends Zend_Controller_Action {
 			exit((string) $l_oAjax);
 		}
 
-		$errors = $this->_getParam('error_handler');
+		$error = $this->_getParam('error_handler');
+		$exception = $error->exception;
 
-		$this->view->applicationEnv = APPLICATION_ENV;
-		$this->view->exception = array(
-			'message' => $errors->exception->getMessage(),
-			'trace' => $errors->exception->getTraceAsString()
-		);
-
-		$this->view->request = print_r($errors->request->getParams(), true);
-
-		switch ($errors->type) {
+		switch ($error->type) {
 			case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
 			case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
 				// 404 error -- controller or action not found
@@ -60,45 +54,55 @@ class ErrorController extends Zend_Controller_Action {
 
 	private function logException($p_iModeFlag, Exception $p_oException) {
 		
-		error_log($p_oException);
 		static $l_oLogger;
-
 		if(isset($l_oLogger) == false) {
 			$l_oLogger = new Zend_Log();
 		}
+		$l_sLogMode = Zend_Log::ALERT;
 
-		switch($p_iModeFlag) {
-			
-			case self::LOG_SILENT:
-				//FIXME it doesnt push to the log.. (console)
-				if(DEBUG) { //#YAY! Log to firebug
-					$l_oZendFireBugWriter = new Zend_Log_Writer_Firebug();
-					$l_oLogger->addWriter($l_oZendFireBugWriter);
-					$l_oLogger->log($p_oException, Zend_Log::INFO);
-				}
-				
-				break;
-			
-			case self::LOG_VERBOSE:
-				$l_oDefaultWriter = new Zend_Log_Writer_Stream('php://output');
-				$l_oLogger->addWriter($l_oDefaultWriter);
-				break;
-
-			default:
-				trigger_error('You forgot to call the flag for our switch case break..');
-		}
-		
-		$l_sExceptionLogFile = Zend_Registry::get('config')->log->dir . 'Exceptions.log';
-		$stream = fopen($l_sExceptionLogFile, 'a', false);
+		//first logger, to file
+		$l_sExceptionLogFile = Zend_Registry::get('config')->log->dir . 'exceptions.log';
+		$stream = fopen($l_sExceptionLogFile, 'a', false); //apend to file
 
 		if ($stream == false) {
 			throw new ErrorException('Failed to open stream');
 		}
 		$l_oZendStreamWriter = new Zend_Log_Writer_Stream($stream);
-		$l_oLogger->addWriter($l_oZendStreamWriter);
-		$l_oLogger->log($p_oException, Zend_Log::ERR);
+		$l_oLogger->addWriter($l_oZendStreamWriter); //log action takes place in the switch below.
+		
+		
+		switch($p_iModeFlag) {
+			
+			case self::LOG_SILENT: //log nothing but firebug
+
+				if(DEBUG) {
+					$l_oZendFireBugWriter = new Zend_Log_Writer_Firebug();
+					$l_oLogger->addWriter($l_oZendFireBugWriter);
+					$l_sLogMode = Zend_Log::INFO;
+				}
+				break;
+			
+			case self::LOG_VERBOSE: //log to the browser
+
+				//always throw ErrorException. its some developrs feedback, and looks not bad at all with xdebug
+				if(DEBUG && $p_oException instanceof ErrorException) {
+					if(!xdebug_is_enabled()) {
+						exit("<pre>Dev #FAIL: \n" . print_r($p_oException->__toString(), true) . "</pre>");
+					} else throw $p_oException;
+					//GO HOME EARLY
+				} else {
+
+					$l_oDefaultWriter = new Zend_Log_Writer_Stream('php://output');
+					$l_oLogger->addWriter($l_oDefaultWriter);
+					$l_sLogMode = Zend_Log::ERR;
+				}
+				break;
+
+			default:
+				trigger_error('You forgot to call the flag for our switch case break..');
+		}
+
+		$l_oLogger->log($p_oException, $l_sLogMode);
 	}
-
-
 }
 
