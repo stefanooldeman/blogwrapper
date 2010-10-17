@@ -8,5 +8,10 @@ class IndexController extends Zend_Controller_Action {
 
 		$this->view->posts = $l_aPosts;
 	}
+
+	public function checkinsAction() {
+		$l_oFoursqaure = new App_Service_FoursquareClient();
+		$this->view->checkins = $l_oFoursqaure->getRecentCheckins(5);
+	}
 }
 

@@ -73,15 +73,19 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 		//$view->headScript()->appendFile('/js/base.js');
     }
 
-	/*
 	public function _initRoutes() {
 
 		$this->bootstrap('frontController');
 		$l_oRouter = $this->getResource('frontController')->getRouter();
 
+		$l_oRouter->addRoute('addAccount', new Zend_Controller_Router_Route('/checkins',
+			array('controller' => 'index', 'action' => 'checkins',)));
+
+		/*
 		$l_oRouter->addRoute('addAccount', new Zend_Controller_Router_Route('/account/add/:service',
 			array('controller' => 'account', 'action' => 'add',)));
-	}*/
+		*/
+	}
 }
 
 // dirty function to dump a var and die
