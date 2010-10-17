@@ -1,10 +1,11 @@
-	<div style="border:1px solid grey; padding:10px;border-radius: 15px;-moz-border-radius: 15px;">
-	{foreach $posts as post}
+	<div style="margin:50px; border:1px solid grey; padding:10px;border-radius: 15px;-moz-border-radius: 15px;">
+	{foreach $posts as post iteration}
 		<h3>{$post.title}</h3>
-		<div>
+		<div style="padding-top:10px; {if !iteration.last}border-bottom:1px solid grey;{/if}">
 			{$post.date}
 			{$post.body}
 		</div>
+		
 	{foreachelse}
 	<p style="text-align:center;">..nothing here..</p>
 	{/foreach}
