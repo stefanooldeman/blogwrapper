@@ -12,6 +12,10 @@ Ketchup main Screen Stylesheet
 	border:0;
 }
 
+a {
+   outline: 0;
+}
+
 /* Styles for layout
 -----------------------------------------------------------------------------*/
 
