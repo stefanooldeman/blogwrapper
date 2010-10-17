@@ -1,24 +1,9 @@
 /*-----------------------------------------------------------------------------
-[client] Screen Stylesheet
+Ketchup main Screen Stylesheet
 
-version:   1.0
-date:      01/03/07
-author:    [your name]
-email:     [you at domain dot com]
+	Author:		@stefanooldeman (on twitter)
+	url:		github.com/stefanooldeman/ketchup
 
-website:   [your domain]
-
-version history: [location of file]
------------------------------------------------------------------------------*/
-
-
-/* Import other stylesheets
------------------------------------------------------------------------------*/
-
-/* @import url("otherstylesheet.css"); */
-
-
-/* Remove margin, padding and border from everything
 -----------------------------------------------------------------------------*/
 
 * {
@@ -46,11 +31,17 @@ body {
 
 
 #wrapper {
-	width: 980px; /* Set page width here - you can also use percentage */
-	text-align:left;
+	width: 80%; /* Set page width here - you can also use percentage */
+	min-width:700px;
 	margin-left:auto;
 	margin-right:auto;
-	background-color: #FFFFFF;
+
+	/* style */
+	margin-top:20px;
+	padding:10px;
+	border:1px solid grey;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
 }
 
 
@@ -90,39 +81,41 @@ li, dd, dt {
 	font-size: 1.2em; /* Equivalent to 12pt */
 }
 
-blockqoute {
+blockquote {
+	background:#f4f4f4;
+	border-left:3px solid #ccc;
+	margin:1.5em 10px;
+	margin-left:auto;
+	padding:.5em 10px;
+	quotes:"\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+	content:open-quote;
+	color:#ccc;
+	font-size:25px;
+	line-height:0.1em;
+	margin-right:.25em;
+	vertical-align:-.4em;
+}
+blockquote:after {
+	position:absolute;
+	color:#ccc;
+	content:close-quote;
+	font-size:25px;
+	margin-left:.25em;
+	vertical-align:.4em;
+}
+blockquote p {
 	display:inline;
-	margin:5px;
-	border-left:4px solid #ddd;
+	font-size: (inherit + 0.5em);
+	font-style: italic;
 }
 
-p, blockqoute, pre, code {
-	margin:5px 0px 0px 5px;
+#posts article {
+	padding-top:10px;
+	border-bottom:1px solid grey;
 }
-
-/* Header
------------------------------------------------------------------------------*/
-
-
-
-/* Navigation
------------------------------------------------------------------------------*/
-
-
-
-/* Footer
------------------------------------------------------------------------------*/
-
-
-
-/* Homepage
------------------------------------------------------------------------------*/
-
-
-
-/* Your template
------------------------------------------------------------------------------*/
-
+#posts article.last {border-bottom:none;}
 
 /* Forms
 -----------------------------------------------------------------------------*/
@@ -149,16 +142,3 @@ td {
   	text-align: left;
 	font-weight: normal;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

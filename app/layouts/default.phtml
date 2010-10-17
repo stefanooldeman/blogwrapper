@@ -1,13 +1,21 @@
 {doctype()}
 <html>
-  <head>
+<head>
 	{headTitle}
 	{headScript()}
 	{headLink()->appendStylesheet('/css/screen.css')}
 	{headMeta()}
-  </head>
-
-  <body>
-  {layout()->content}
-  </body>
+</head>
+<body>
+	<div id="wrapper">
+		<a href="/index"><h1>Stefano Oldeman's posts</h1></a>
+		<nav>
+			<ul>
+				<li><a target="_blank" href="http://twitter.com/stefanooldeman">twitter</a></li>
+				<li><a target="_blank" href="http://github.com/stefanooldeman">github</a></li>
+			</ul>
+		</nav>
+		{layout()->content}
+	</div>
+</body>
 </html>
