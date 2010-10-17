@@ -30,6 +30,18 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
 	}
 
+	public function _initCache() {
+
+		//Zend_Cache, type: file, serialization cache data: On
+		$l_oZendCache = Zend_Cache::factory('Core', 'File', array(
+				'lifetime' => (int) $this->config->cache->lifetime,
+				'automatic_serialization' => true
+			), array('cache_dir' => $this->config->cache->dir)
+		);
+
+		Zend_Registry::set('cache', $l_oZendCache);
+	}
+
 	public function _initViewRender() {
 
 		$this->bootstrap('View');
@@ -47,7 +59,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 	/**
      * _initLayout sets the doctype, headMeta and headTitle
      */
-	/*
     public function _initViewHelper() {
         $this->bootstrap('Layout');
         $layout = $this->getResource('layout');
@@ -55,13 +66,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
         $view->headMeta()->appendHttpEquiv('Content-type:', 'text/html;charset=utf-8');
         $view->headTitle()->setSeparator(' - ');
-        $view->headTitle('Zend Framework');
+        $view->headTitle('Ketchup');
 
-		$view->doctype(Zend_View_Helper_Doctype::XHTML1_STRICT);
-		$view->headScript()->appendFile('/js/jquery/jquery-1.4.2.js');
-		$view->headScript()->appendFile('/js/base.js');
+		$view->doctype(Zend_View_Helper_Doctype::HTML5);
+		//$view->headScript()->appendFile('/js/jquery/jquery-1.4.2.js');
+		//$view->headScript()->appendFile('/js/base.js');
     }
 
+	/*
 	public function _initRoutes() {
 
 		$this->bootstrap('frontController');
@@ -69,7 +81,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
 		$l_oRouter->addRoute('addAccount', new Zend_Controller_Router_Route('/account/add/:service',
 			array('controller' => 'account', 'action' => 'add',)));
-
 	}*/
 }
 

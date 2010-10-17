@@ -34,6 +34,8 @@ class App_Service_PosterousClient extends Zend_Http_Client {
 
 	private $m_oBody;
 
+	protected $cache;
+
 	public function __construct() {
 		parent::__construct(null, array(
 			'useragent' => 'Stefano_Oldeman_s_Ketchup_Http',
@@ -41,9 +43,11 @@ class App_Service_PosterousClient extends Zend_Http_Client {
 		));
 
 		$l_aConfig = Zend_Registry::get('config')->posterous->toArray();
-		
+
 		$this->setApiToken($l_aConfig['api']['token']);
 		$this->setAuth($l_aConfig['user']['username'], $l_aConfig['user']['password']);
+
+		$this->cache = Zend_Registry::get('cache');
     }
 
 	public function fetchPosts() {
@@ -73,9 +77,19 @@ class App_Service_PosterousClient extends Zend_Http_Client {
 	 * @param array $p_aParams request key => value
 	 */
 	protected function doRequest($p_iMethod, $p_sMethodUri, $p_aParams = array()) {
-		
+
 		$l_aRequestValues = $p_aParams;
 		$l_aRequestValues['api_token'] = $this->getApiToken();
+
+		$l_oCache = $this->getCache();
+		$l_sCacheKey = pathinfo(__FILE__, PATHINFO_FILENAME) . '_' . $p_sMethodUri . '_' . md5($p_iMethod . serialize($p_aParams));
+
+		//GO HOME EARLY
+		$l_oData = $l_oCache->load($l_sCacheKey);
+		if($l_oData !== false) {
+			$this->setBody($l_oData);
+			return $l_oData;
+		}
 
 		$l_sMethod = 'setParameter' . ($p_iMethod == self::POST ? 'Post' : 'Get');
 		foreach($l_aRequestValues as $l_sName => $l_mValue) {
@@ -104,6 +118,7 @@ class App_Service_PosterousClient extends Zend_Http_Client {
 		//the casting here smells!!!
 		$l_oResult = (object) json_decode($this->getLastResponse()->getBody()); 
 		$this->setBody($l_oResult);
+		$l_oCache->save($l_oResult, $l_sCacheKey);
 		
 		return $l_oResult;
 	}
@@ -126,6 +141,11 @@ class App_Service_PosterousClient extends Zend_Http_Client {
 
 	public function getBaseUrl() {
 		return $this->m_sBaseUrl;
+	}
+
+	//---- extra -----
+	protected function getCache() {
+		return $this->cache;
 	}
 
 }
