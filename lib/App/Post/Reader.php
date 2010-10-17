@@ -13,11 +13,17 @@ class App_Post_Reader {
 
 	const OUTPUT_MARKDOWN	= 'markdown';
 	const OUTPUT_TEXTILE	= 'textile';
+	const OUTPUT_RAW		= 'raw';
+
+	const ADAPTER_POSTEROUS = 'posterous';
+	const ADAPTER_TUMBLR	= 'tumblr';
+	const ADAPTER_FILE		= 'tumblr';
+
 
 	public function __construct() {
-		//@todo move these 2 choises to the config
-		$this->setOutputType(self::OUTPUT_MARKDOWN);
-		$this->setAdapter(new App_Service_PosterousClient());
+		//load config and set some values.
+		//as setting the adapter, and markup language.
+		$this->loadSettings();
 	}
 
 	public function fetchPost($id) {
@@ -53,15 +59,45 @@ class App_Post_Reader {
 					break;
 
 				case self::OUTPUT_TEXTILE:
-					throw new ErrorException('This type of output markup is not implemented yet', self::OUTPUT_MARKDOWN);
+					throw new ErrorException('This type of output markup is not implemented yet');
 					break;
 
+				case self::OUTPUT_RAW:
+					//do nothing....
 			}
 			$l_oPost->setBody($l_sBody);
 
 			$l_aCollection[] = $l_oPost->toArray();
 		}
 		return $l_aCollection;
+	}
+
+	protected function loadSettings() {
+		$config = Zend_Registry::get('config');
+		$l_sServiceName = $config->post->service;
+		switch($l_sServiceName) {
+			case self::ADAPTER_POSTEROUS:
+			case self::ADAPTER_TUMBLR:
+			case self::ADAPTER_FILE:
+				$l_sClass = $config->autoloaderNamespaces->app . 'Service_' . ucfirst($l_sServiceName) . 'Client';
+				$this->setAdapter(new $l_sClass());
+			break;
+
+			default:
+				throw new ErrorException('check your config. invalid option on "post.service" (this service is not yet implemented nor suported)');
+		}
+
+		$l_sMarkUpType = $config->post->markup;
+		switch($l_sMarkUpType) {
+			case self::OUTPUT_MARKDOWN:
+			case self::OUTPUT_TEXTILE:
+			case self::OUTPUT_RAW:
+				$this->setOutputType($l_sMarkUpType);
+			break;
+
+			default:
+				throw new ErrorException('check your config. invalid option on "post.markup" (unsupported markup type was set)');
+		}
 	}
 
 	public function setAdapter($p_oService) {
@@ -78,7 +114,6 @@ class App_Post_Reader {
 	public function getOutputType() {
 		return $this->m_sOutputType;
 	}
-
 
 
 }
