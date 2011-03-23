@@ -34,4 +34,17 @@ for these run
     git submodule init
     git submodule update
 
+put this in your apache/extra/httpd-vhosts.conf
 
+    <VirtualHost *:80>
+		ServerName local.my-services
+		DocumentRoot "{path to clone}/my-services/public/"
+
+		<Directory "{path to clone}/my-services/public/">
+			Options Indexes MultiViews FollowSymLinks
+			AllowOverride All
+		</Directory>
+
+    </VirtualHost>
+
+and add `local.my-services` to /etc/hosts
