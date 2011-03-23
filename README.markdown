@@ -1,27 +1,35 @@
-h1. Ketchup!
+### This is a ZF app.
 
-kethcup has the goal to support many social media chanels as also blogging services as: posterous, thumblr, and so on.
-apart from that I might implement the file based textile system.
+The goal is to have a sandbox where I can experiment with ZF and implementing external services (APIs)
+[earlier this project was called ketchup ,very random]
 
-but first and next on the roadmap is implementing a markdown interperter.
+The Goal is to support many social media channels as also blogging services as: `Posterous`, `Thumblr`, and so on.
 
-please note: This app is in `very` early development.
+Actually this looks pretty much like a *blog aggregator application*.
 
-important. to get everything up and running!
-*update:* ive added all the libraries, thus zend-framework. later on i might figure out about :submodules
+The interesting part about supporting multiple services (mostly blog tools) is to build a general wrapper posts / articles so switching from a service should be easy.
 
-h2. Posterous
-Hey were using the full rest beta api 2.0 :) 
-to get some results from your posterous account "see the api 2.0 docs":http://apibeta.posterous.com/
+#### add your credentials to the ./app/config.ini
+(all supported services are below this line)
 
-And add it some values to the ./app/config.ini
-* your 'personal' API Token "generate one here":http://posterous.com/manage/token
-* your username (type:email) 
+Posterous:
+* your 'personal' API Toke (generate one [here](http://posterous.com/manage/token "manage token")
+* your username (type:email)
 * and password
 
+To be added:
+1. [Thumblr](http://www.tumblr.com/docs/en/api "Thumbl Api")
+2. _textile /markdown file bases_ (github)
+3. [Blogger](http://code.google.com/apis/blogger/docs/1.0/developers_guide_php.html "Google Blogger Api")
+
+
 Dependencies:
-* Zend-Framework (1.10.8)
+* Zend-Framework (1.x)
 * Dwoo. a PHP5 smarty based / like template engine
 
+for these run
 
-thats it so far.
+    git submodule init
+    git submodule update
+
+
