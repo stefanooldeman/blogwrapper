@@ -42,7 +42,7 @@ class App_Post_Reader {
 			$l_sDate = date('d-m-Y', strtotime($l_oStd->display_date));
 			$l_oPost->setDate($l_sDate);
 
-			$l_sBody = $l_oStd->body;
+			$l_sBody = $l_oStd->body_html;
 			
 			$l_sBody = preg_replace_callback(
 				'/(\[\[)(posterous-content\:)([A-z]+)(\]\])/',
