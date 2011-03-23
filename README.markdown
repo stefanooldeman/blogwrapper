@@ -12,7 +12,7 @@ all supported services are below this line
 
 Posterous:
 
-*   your 'personal' API Toke (generate one [here](http://posterous.com/manage/token "manage token")
+*   your 'personal' API Token (generate one [here](http://posterous.com/manage/token "manage token"))
 *   your username (type:email)
 *   and password
 
