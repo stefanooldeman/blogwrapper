@@ -1,3 +1,6 @@
 [submodule "lib/Zend"]
 	path = lib/Zend
 	url = https://github.com/mridgway/Zend-Framework-1.x-Mirror.git
+[submodule "lib/Dwoo"]
+	path = lib/Dwoo
+	url = https://github.com/Seldaek/Dwoo.git
