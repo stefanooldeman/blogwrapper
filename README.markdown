@@ -48,3 +48,8 @@ put this in your apache/extra/httpd-vhosts.conf
     </VirtualHost>
 
 and add `local.my-services` to /etc/hosts
+
+
+create a new symlink for ZendFramework :
+
+    ln -s lib/ZendFramework/library/Zend/ lib/Zend

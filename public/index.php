@@ -16,7 +16,7 @@ set_include_path(
 );
 
 /* Dwoo Templating solution */
-require_once('Dwoo/dwooAutoload.php');
+require_once('Dwoo/lib/dwooAutoload.php');
 
 /** Zend_Application */
 require_once 'Zend/Application.php';
