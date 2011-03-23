@@ -25,8 +25,9 @@ To be added:
 
 
 Dependencies:
-* Zend-Framework (1.x)
-* Dwoo. a PHP5 smarty based / like template engine
+
+*   Zend-Framework (1.x)
+*   Dwoo. a PHP5 smarty based / like template engine
 
 for these run
 
