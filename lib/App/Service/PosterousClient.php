@@ -36,6 +36,11 @@ class App_Service_PosterousClient extends Zend_Http_Client {
 
 	protected $cache;
 
+	/**
+	 * @var App_Post_Post
+	 */
+	public $m_oPost;
+
 	public function __construct() {
 		parent::__construct(null, array(
 			'useragent' => 'Stefano_Oldeman_s_Ketchup_Http',
@@ -57,7 +62,24 @@ class App_Service_PosterousClient extends Zend_Http_Client {
 	}
 
 
+	public function fillPost($p_oStdResponse) {
 
+		$l_oPost = $this->getPost();
+
+		$l_oPost->setId($p_oStdResponse->id);
+		$l_oPost->setTitle($p_oStdResponse->title);
+		$l_sDate = date('d-m-Y', strtotime($p_oStdResponse->display_date));
+		$l_oPost->setDate($l_sDate);
+		$l_sBody = $p_oStdResponse->body_full;
+
+		$l_sBody = preg_replace_callback(
+			'/(\[\[)(posterous-content\:)([A-z]+)(\]\])/',
+			create_function('$p_aMatches','return $p_aMatches[3];'),
+			$l_sBody
+		);
+		$l_oPost->setBody($l_sBody);
+		return $l_oPost;
+	}
 
 	// ---------- Getters and setters ----------- \\
 
@@ -69,6 +91,10 @@ class App_Service_PosterousClient extends Zend_Http_Client {
 
 
 	// ---------- System wise methods ------------ \\
+
+	//dependency injection
+	public function setPost($p_oPost) { $this->m_oPost = $p_oPost; }
+	public function getPost() { return $this->m_oPost; }
 
 	/**
 	 * doRequest
@@ -116,7 +142,7 @@ class App_Service_PosterousClient extends Zend_Http_Client {
 
 		//@fixme PosterousClient::doReqeust() just trow something if we don't have results.. and tell me why
 		//the casting here smells!!!
-		$l_oResult = (object) json_decode($this->getLastResponse()->getBody()); 
+		$l_oResult = json_decode($this->getLastResponse()->getBody());
 		$this->setBody($l_oResult);
 		$l_oCache->save($l_oResult, $l_sCacheKey);
 		

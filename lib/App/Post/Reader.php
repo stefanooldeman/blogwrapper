@@ -2,18 +2,7 @@
 
 class App_Post_Reader {
 
-	/**
-	 * @var App_Post_Post
-	 */
-	private $m_oPost;
-
 	private $m_oAdapter;
-
-	private $m_sOutputType;
-
-	const OUTPUT_MARKDOWN	= 'markdown';
-	const OUTPUT_TEXTILE	= 'textile';
-	const OUTPUT_RAW		= 'raw';
 
 	const ADAPTER_POSTEROUS = 'posterous';
 	const ADAPTER_TUMBLR	= 'tumblr';
@@ -31,42 +20,23 @@ class App_Post_Reader {
 	}
 
 	public function fetchOverview() {
-		$l_aResult = $this->getAdapter()->fetchPosts(); //for testing the rest client
+
+		$l_oAdapter = $this->getAdapter();
+		try {
+			$l_aResult = $l_oAdapter->fetchPosts(); //for testing the rest client
+		} catch(Zend_Http_Client_Adapter_Exception $exception) {
+			return false;
+		}
+
+		$config = Zend_Registry::get('config');
+		$l_sMarkup = $config->post->markup;
+
 
 		$l_aCollection = array();
 		foreach($l_aResult as $l_oStd) {
-			$l_oPost = new App_Post_Post();
-			//@todo abstract filling in a post object. this migh be tottaly different when using other services..
-			$l_oPost->setId($l_oStd->id);
-			$l_oPost->setTitle($l_oStd->title);
-			$l_sDate = date('d-m-Y', strtotime($l_oStd->display_date));
-			$l_oPost->setDate($l_sDate);
-
-			$l_sBody = $l_oStd->body_html;
-			
-			$l_sBody = preg_replace_callback(
-				'/(\[\[)(posterous-content\:)([A-z]+)(\]\])/',
-				create_function('$p_aMatches','return $p_aMatches[3];'),
-				$l_sBody
-			);
-
-			//we decode htmldecode for the markup parsers.. don't trust api results
-			$l_sBody = htmlspecialchars_decode(strip_tags($l_sBody));
-
-			switch($this->getOutputType()) {
-				case self::OUTPUT_MARKDOWN:
-					$l_sBody = Markdown($l_sBody);
-					break;
-
-				case self::OUTPUT_TEXTILE:
-					throw new ErrorException('This type of output markup is not implemented yet');
-					break;
-
-				case self::OUTPUT_RAW:
-					//do nothing....
-			}
-			$l_oPost->setBody($l_sBody);
-
+			$l_oAdapter->setPost(new App_Post_Post($l_sMarkup));
+			$l_oPost = $l_oAdapter->fillPost($l_oStd);
+			$l_oPost->formatBody();
 			$l_aCollection[] = $l_oPost->toArray();
 		}
 		return $l_aCollection;
@@ -86,18 +56,6 @@ class App_Post_Reader {
 			default:
 				throw new ErrorException('check your config. invalid option on "post.service" (this service is not yet implemented nor suported)');
 		}
-
-		$l_sMarkUpType = $config->post->markup;
-		switch($l_sMarkUpType) {
-			case self::OUTPUT_MARKDOWN:
-			case self::OUTPUT_TEXTILE:
-			case self::OUTPUT_RAW:
-				$this->setOutputType($l_sMarkUpType);
-			break;
-
-			default:
-				throw new ErrorException('check your config. invalid option on "post.markup" (unsupported markup type was set)');
-		}
 	}
 
 	public function setAdapter($p_oService) {
@@ -107,13 +65,4 @@ class App_Post_Reader {
 	public function getAdapter() {
 		return $this->m_oAdapter;
 	}
-
-	public function setOutputType($p_sFlag) {
-		$this->m_sOutputType = $p_sFlag;
-	}
-	public function getOutputType() {
-		return $this->m_sOutputType;
-	}
-
-
 }
